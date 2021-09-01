@@ -32,4 +32,4 @@ class MinerDoesNotExist(Exception):
 
 
 class InvalidCoin(Exception):
-	pass
+    pass

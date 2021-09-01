@@ -90,10 +90,10 @@ class StatChartItem:
 
 
 class Worker:
-    def __init__(self, name: str, online: bool, count: int, reported: int, effective: int,
+    def __init__(self, name: str, is_online: bool, count: int, reported: int, effective: int,
             average_effective: int, valid: int, stale: int, invalid: int, last_seen: int):
         self.name = name
-        self.online = online
+        self.is_online = is_online
         self.count = count
         self.reported_hashrate = reported
         self.current_effective_hashrate = effective

@@ -23,24 +23,27 @@ import si_prefix
 from flexpoolapi import poolapi
 from . import exceptions
 
+coins = {}
+
+
+def update_coins():
+    global coins
+    for coin in poolapi.coins():
+        coins[coin.ticker] = {}
+        coins[coin.ticker]['hashrate_unit'] = coin.hashrate_unit
+        coins[coin.ticker]['decimal_places'] = coin.decimal_places
 
 def format_hashrate(hashrate: int, coin: str):
-    hashrate_unit = None
-    for coin_ in poolapi.coins():
-        if coin_.ticker == coin:
-            hashrate_unit = coin_.hashrate_unit
-    if not hashrate_unit:
+    try:
+        return si_prefix.si_format(hashrate) + coins[coin]["hashrate_unit"]
+    except KeyError:
         raise(exceptions.InvalidCoin(f"Coin {coin} is invalid!"))
-    return si_prefix.si_format(hashrate) + hashrate_unit
 
 def format_decimals(value: int, coin: str, prec=6):
-    decimal_places = None
-    for coin_ in poolapi.coins():
-        if coin_.ticker == coin:
-            decimal_places = coin_.decimal_places
-    if not decimal_places:
+    try:
+        amount = round(value / 10 ** coins[coin]["decimal_places"], prec)
+        if amount == int(amount):
+            amount = int(amount)
+        return f"{amount} {coin.upper()}"
+    except KeyError:
         raise(exceptions.InvalidCoin(f"Coin {coin} is invalid!"))
-    amount = round(value / 10 ** decimal_places, prec)
-    if amount == int(amount):
-        amount = int(amount)
-    return f"{amount} {coin.upper()}"

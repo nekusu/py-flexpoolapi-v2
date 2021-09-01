@@ -20,6 +20,7 @@
 
 from . import poolapi as _pool_module
 from . import minerapi as _miner_module
+from . import utils
 
 pool = _pool_module.PoolAPI
 miner = _miner_module.MinerAPI
@@ -33,3 +34,4 @@ def set_base_endpoint(endpoint):
 DEFAULT_ENDPOINT = "https://api.flexpool.io/v2"
 
 set_base_endpoint(DEFAULT_ENDPOINT)
+utils.update_coins()

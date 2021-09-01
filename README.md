@@ -8,7 +8,7 @@ Install **py-flexpoolapi-v2**.
 
 ## Build from source
 ```sh
-git clone https://github.com/nekusu/py-flexpoolapi-v2.git
+git clone -b api-v2 https://github.com/nekusu/py-flexpoolapi-v2.git
 cd py-flexpoolapi-v2
 pip3 install -r requirements.txt
 sudo make install  # or `sudo python3 setup.py install`

@@ -20,14 +20,27 @@
 
 import si_prefix
 
+from flexpoolapi import poolapi
+from . import exceptions
 
-def format_hashrate(hashrate: int):
-    return si_prefix.si_format(hashrate) + "H/s"
 
+def format_hashrate(hashrate: int, coin: str):
+    hashrate_unit = None
+    for coin_ in poolapi.coins():
+        if coin_.ticker == coin:
+            hashrate_unit = coin_.hashrate_unit
+    if not hashrate_unit:
+        raise(exceptions.InvalidCoin(f"Coin {coin} is invalid!"))
+    return si_prefix.si_format(hashrate) + hashrate_unit
 
-def format_weis(weis: int, prec=5):
-    amount = round(weis / 10**18, prec)
+def format_decimals(value: int, coin: str, prec=6):
+    decimal_places = None
+    for coin_ in poolapi.coins():
+        if coin_.ticker == coin:
+            decimal_places = coin_.decimal_places
+    if not decimal_places:
+        raise(exceptions.InvalidCoin(f"Coin {coin} is invalid!"))
+    amount = round(value / 10 ** decimal_places, prec)
     if amount == int(amount):
-        # Get rid of .0
         amount = int(amount)
-    return str(amount) + " ETH"
+    return f"{amount} {coin.upper()}"

@@ -20,20 +20,16 @@
 
 from . import poolapi as _pool_module
 from . import minerapi as _miner_module
-from . import workerapi as _worker_module
 
-pool = _pool_module.PoolAPI()
+pool = _pool_module.PoolAPI
 miner = _miner_module.MinerAPI
 
 
 def set_base_endpoint(endpoint):
-    global pool, miner
     _pool_module.update_endpoint(endpoint)
     _miner_module.update_endpoint(endpoint)
-    _worker_module.update_endpoint(endpoint)
-    pool = _pool_module.PoolAPI()
 
 
-DEFAULT_ENDPOINT = "https://flexpool.io/api/v1"
+DEFAULT_ENDPOINT = "https://api.flexpool.io/v2"
 
 set_base_endpoint(DEFAULT_ENDPOINT)

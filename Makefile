@@ -18,25 +18,13 @@
 #  SOFTWARE.
 #
 
-.PHONY: make upload install uninstall test clean
+.PHONY: make install uninstall
 
 make:
 	python3 setup.py sdist bdist_wheel
-
-upload:
-	twine upload --skip-existing dist/*
 
 install:
 	python3 setup.py install
 
 uninstall:
 	pip3 uninstall flexpoolapi
-
-test:
-	python3 -m pytest --cov flexpoolapi
-
-lint:
-	flake8 flexpoolapi tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-clean:
-	rm -rf flexpoolapi.egg-info dist build docs/_build .pytest_cache

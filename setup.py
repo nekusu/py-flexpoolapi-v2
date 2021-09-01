@@ -7,20 +7,19 @@ with open("README.md", "r") as f:
 with open("requirements.txt", "r") as f:
     requirements = f.read()
 
-version = subprocess.check_output(
-    "git describe --abbrev=0 --tag", shell=True).decode()
+version = subprocess.check_output("git describe --abbrev=0 --tag", shell=True).decode()
 if version[-2:] == "\n":
     version = version[:-2]
 
 setuptools.setup(
     name="flexpoolapi",
     version=version,
-    author="Flexpool",
-    author_email="office@flexpool.io",
-    description="🐍 Pythonic wrapper for Flexpool Public API",
+    author="nekusu",
+    author_email="nosoynahuel11@gmail.com",
+    description="🐍 Pythonic wrapper for Flexpool API v2",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/flexpool/py-flexpoolapi",
+    url="https://github.com/nekusu/py-flexpoolapi-v2",
     packages=["flexpoolapi"],
     install_requires=requirements,
     classifiers=[

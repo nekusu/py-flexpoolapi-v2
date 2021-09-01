@@ -31,5 +31,5 @@ class MinerDoesNotExist(Exception):
     pass
 
 
-class InvalidMinerAddress(Exception):
-    pass
+class InvalidCoin(Exception):
+	pass

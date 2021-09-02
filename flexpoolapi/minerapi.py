@@ -56,7 +56,7 @@ class WorkerCount:
         self.workers_offline = offline
 
     def __repr__(self):
-        return f"<flexpoolapi.miner.WorkerCount object {self.workers_offline} - {self.workers_offline}>"
+        return f"<flexpoolapi.miner.WorkerCount object {self.workers_online}/{self.workers_offline}>"
 
 
 class Stats:
@@ -197,7 +197,8 @@ class MinerAPI:
     def worker_count(self):
         api_request = requests.get(f"{self.endpoint}/workerCount", params=self.params)
         shared.check_response(api_request)
-        return api_request.json()["result"]
+        api_request = api_request.json()["result"]
+        return WorkerCount(api_request["workersOnline"], api_request["workersOffline"])
 
     def round_share(self):
         api_request = requests.get(f"{self.endpoint}/roundShare", params=self.params)

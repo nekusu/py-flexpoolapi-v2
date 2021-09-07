@@ -6,9 +6,14 @@ Structured Python wrapper for Flexpool API v2.
 
 Install **py-flexpoolapi-v2**.
 
+## Using pip
+```sh
+pip3 install flexpoolapi-v2
+```
+
 ## Build from source
 ```sh
-git clone -b api-v2 https://github.com/nekusu/py-flexpoolapi-v2.git
+git clone https://github.com/nekusu/py-flexpoolapi-v2.git
 cd py-flexpoolapi-v2
 pip3 install -r requirements.txt
 sudo make install  # or `sudo python3 setup.py install`

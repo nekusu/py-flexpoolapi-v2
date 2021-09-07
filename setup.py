@@ -12,10 +12,11 @@ if version[-2:] == "\n":
     version = version[:-2]
 
 setuptools.setup(
-    name="flexpoolapi",
+    name="flexpoolapi-v2",
     version=version,
     author="nekusu",
-    author_email="nosoynahuel11@gmail.com",
+    author_email="nekusu.dev@gmail.com",
+    license="MIT",
     description="🐍 Pythonic wrapper for Flexpool API v2",
     long_description=long_description,
     long_description_content_type="text/markdown",

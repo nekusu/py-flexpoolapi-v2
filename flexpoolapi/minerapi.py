@@ -40,6 +40,41 @@ def locate_address(address):
     return coin
 
 
+class NotificationPreferences:
+    def __init__(self, workers_offline_notifications: bool, payout_notifications: bool):
+        self.workers_offline_notifications = workers_offline_notifications
+        self.payout_notifications = payout_notifications
+
+    def __repr__(self):
+        return f"<flexpoolapi.miner.NotificationPreferences object>"
+
+
+class Notifications:
+    def __init__(self, email: str):
+        self.email = email
+
+    def __repr__(self):
+        return f"<flexpoolapi.miner.Notifications object {self.email}>"
+
+
+class Details:
+    def __init__(self, client_ip_address: str, current_fee_price: int, first_joined: int, ip_address: str,
+            max_fee_price: int, payout_limit: int, notification_preferences: NotificationPreferences,
+            notifications: Notifications):
+        self.client_ip_address = client_ip_address
+        self.current_network_fee_price = current_fee_price
+        self.first_joined_time = datetime.fromtimestamp(first_joined)
+        self.first_joined = first_joined
+        self.ip_address = ip_address
+        self.max_fee_price = max_fee_price
+        self.payout_limit = payout_limit
+        self.notification_preferences = notification_preferences
+        self.notifications = notifications
+
+    def __repr__(self):
+        return f"<flexpoolapi.miner.Details object {self.ip_address}>"
+
+
 class Balance:
     def __init__(self, balance: int, balance_countervalue: float, price: float):
         self.balance = balance
@@ -187,6 +222,19 @@ class MinerAPI:
         self.params = [("coin", self.coin), ("address", self.address)]
         self.endpoint = __MINER_API_ENDPOINT__
         locate_address(address)
+
+    def details(self):
+        api_request = requests.get(f"{self.endpoint}/details", params=self.params)
+        shared.check_response(api_request)
+        api_request = api_request.json()["result"]
+        notification_preferences = api_request["notificationPreferences"]
+        notifications = api_request["notifications"]
+        return Details(
+            api_request["clientIPAddress"], api_request["currentNetworkFeePrice"], api_request["firstJoined"],
+            api_request["ipAddress"], api_request["maxFeePrice"], api_request["payoutLimit"],
+            NotificationPreferences(
+                notification_preferences["workersOfflineNotifications"], notification_preferences["payoutNotifications"]),
+            Notifications(notifications["email"]))
 
     def balance(self, countervalue: str="USD"):
         api_request = requests.get(f"{self.endpoint}/balance", params=self.params + [("countervalue", countervalue)])

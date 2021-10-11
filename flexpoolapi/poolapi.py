@@ -118,7 +118,7 @@ class CoinsList:
         return len(self.coins)
 
     def __repr__(self):
-        return f"<flexpoolapi.shared.PageResponse object {str(self.coins)}>"
+        return f"<flexpoolapi.shared.CoinsList object {str(self.coins)}>"
 
     def __str__(self):
         return str(self.coins)

@@ -223,6 +223,22 @@ class MinerAPI:
         self.endpoint = __MINER_API_ENDPOINT__
         locate_address(address)
 
+    def payout_settings(self, ip_address: str, max_fee_price: int, payout_limit: int):
+        api_request = requests.put(f"{self.endpoint}/payoutSettings", params=self.params + \
+            [("ipAddress", ip_address), ("maxFeePrice", max_fee_price), ("payoutLimit", payout_limit)])
+        shared.check_response(api_request)
+        return True
+
+    def notification_settings(self, ip_address: str, email_enabled: bool, email: str=None,
+            payment_notifications: bool=None, workers_offline_notifications: bool=None):
+        params = [("ipAddress", ip_address), ("emailEnabled", email_enabled)]
+        if email_enabled:
+            params += [("email", email), ("paymentNotifications", payment_notifications),
+                ("workersOfflineNotifications", workers_offline_notifications)]
+        api_request = requests.put(f"{self.endpoint}/notificationSettings", params=self.params + params)
+        shared.check_response(api_request)
+        return True
+
     def details(self):
         api_request = requests.get(f"{self.endpoint}/details", params=self.params)
         shared.check_response(api_request)

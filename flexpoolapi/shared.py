@@ -18,6 +18,7 @@
 #  SOFTWARE.
 #
 
+from typing import List
 from datetime import datetime
 
 from . import exceptions
@@ -49,7 +50,7 @@ class Block:
 
 
 class PageResponse:
-    def __init__(self, contents: [], total_items: int, total_pages: int):
+    def __init__(self, contents: List, total_items: int, total_pages: int):
         self.contents = contents
         self.total_items = total_items
         self.total_pages = total_pages

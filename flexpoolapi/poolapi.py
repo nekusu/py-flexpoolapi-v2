@@ -20,6 +20,7 @@
 
 import requests
 
+from typing import Dict, List
 from datetime import datetime
 from . import shared
 
@@ -61,7 +62,7 @@ def coins_full():
 
 
 class Hashrate:
-    def __init__(self, total: int, regions: {str: float}):
+    def __init__(self, total: int, regions: Dict):
         self.regions = regions
         self.total = total
 
@@ -75,7 +76,7 @@ class Hashrate:
 
 
 class HashrateChartItem:
-    def __init__(self, timestamp: int, regions: {str: float}, total: float):
+    def __init__(self, timestamp: int, regions: Dict, total: float):
         self.time = datetime.fromtimestamp(timestamp)
         self.timestamp = timestamp
         self.regions = regions
@@ -107,7 +108,7 @@ class Coin:
 
 
 class CoinsList:
-    def __init__(self, coins: [], countervalues: []):
+    def __init__(self, coins: List, countervalues: List):
         self.coins = coins
         self.countervalues = countervalues
 
@@ -137,7 +138,7 @@ class ChainData:
 
 
 class MarketData:
-    def __init__(self, price_change: float, prices: {str: int}, market_caps: {str: int}):
+    def __init__(self, price_change: float, prices: Dict, market_caps: Dict):
         self.price_change = price_change
         self.prices = prices
         self.market_caps = market_caps
@@ -148,7 +149,7 @@ class MarketData:
 
 class CoinFull:
     def __init__(self, ticker: str, name: str, algorithm: str, hashrate_unit: str, hashrate: float, miner_count: int,
-            default_prefix: str, applicable_prefixes: [], decimal_places: int, difficulty_factor: int, website_link: str,
+            default_prefix: str, applicable_prefixes: List, decimal_places: int, difficulty_factor: int, website_link: str,
             whitepaper_link: str, chain_data: ChainData, market_data: MarketData):
         self.ticker = ticker
         self.name = name

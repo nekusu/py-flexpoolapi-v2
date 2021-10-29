@@ -68,12 +68,14 @@ class PageResponse:
 
 
 def check_response(request):
-    if request.status_code not in [200, 400]:
-        raise(exceptions.APIError(
+    if request.status_code not in [200, 201, 400]:
+        raise(exceptions.UnexpectedStatusCode(
             f"API Returned unexpected status code: {request.status_code} "
             f"{request.reason} (Request URL: {request.url})"))
 
-    error = request.json()["error"]
+    if request.text:
+        error = "error" in request.json() and request.json()["error"] or \
+            "message" in request.json() and request.json()["message"]
 
-    if error:
-        raise(exceptions.APIError(f"API Returned error: {error} (Request URL: {request.url})"))
+        if error:
+            raise(exceptions.APIError(f"API Returned error: {error} (Request URL: {request.url})"))

@@ -30,16 +30,18 @@ def update_coins():
     global coins
     for coin in poolapi.coins():
         coins[coin.ticker] = {
-            'hashrate_unit': coin.hashrate_unit,
-            'decimal_places': coin.decimal_places
+            "hashrate_unit": coin.hashrate_unit,
+            "decimal_places": coin.decimal_places,
         }
+
 
 def format_hashrate(hashrate: int, coin: str):
     coin = coin.lower()
     try:
         return si_prefix.si_format(hashrate) + coins[coin]["hashrate_unit"]
     except KeyError:
-        raise(exceptions.InvalidCoin(f"Coin {coin.upper()} is invalid!"))
+        raise (exceptions.InvalidCoin(f"Coin {coin.upper()} is invalid!"))
+
 
 def format_decimals(value: int, coin: str, prec=6):
     coin = coin.lower()
@@ -49,4 +51,4 @@ def format_decimals(value: int, coin: str, prec=6):
             amount = int(amount)
         return f"{amount} {coin.upper()}"
     except KeyError:
-        raise(exceptions.InvalidCoin(f"Coin {coin.upper()} is invalid!"))
+        raise (exceptions.InvalidCoin(f"Coin {coin.upper()} is invalid!"))

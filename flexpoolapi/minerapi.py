@@ -31,12 +31,15 @@ def update_endpoint(endpoint):
     global __MINER_API_ENDPOINT__
     __MINER_API_ENDPOINT__ = endpoint + "/miner"
 
+
 def locate_address(address):
-    api_request = requests.get(f"{__MINER_API_ENDPOINT__}/locateAddress", params=[("address", address)])
+    api_request = requests.get(
+        f"{__MINER_API_ENDPOINT__}/locateAddress", params=[("address", address)]
+    )
     shared.check_response(api_request)
     coin = api_request.json()["result"]
     if not coin:
-        raise(exceptions.MinerDoesNotExist(f"Miner {address} does not exist"))
+        raise (exceptions.MinerDoesNotExist(f"Miner {address} does not exist"))
     return coin
 
 
@@ -58,9 +61,17 @@ class Notifications:
 
 
 class Details:
-    def __init__(self, client_ip_address: str, current_fee_price: int, first_joined: int, ip_address: str,
-            max_fee_price: int, payout_limit: int, notification_preferences: NotificationPreferences,
-            notifications: Notifications):
+    def __init__(
+        self,
+        client_ip_address: str,
+        current_fee_price: int,
+        first_joined: int,
+        ip_address: str,
+        max_fee_price: int,
+        payout_limit: int,
+        notification_preferences: NotificationPreferences,
+        notifications: Notifications,
+    ):
         self.client_ip_address = client_ip_address
         self.current_network_fee_price = current_fee_price
         self.first_joined_time = datetime.fromtimestamp(first_joined)
@@ -95,7 +106,15 @@ class WorkerCount:
 
 
 class Stats:
-    def __init__(self, effective: int, effective_day: int, reported: int, valid: int, stale: int, invalid: int):
+    def __init__(
+        self,
+        effective: int,
+        effective_day: int,
+        reported: int,
+        valid: int,
+        stale: int,
+        invalid: int,
+    ):
         self.current_effective_hashrate = effective
         self.average_effective_hashrate = effective_day
         self.reported_hashrate = reported
@@ -108,8 +127,16 @@ class Stats:
 
 
 class StatChartItem:
-    def __init__(self, timestamp: int, effective: int, average_effective: int, reported: int, valid: int,
-            stale: int, invalid: int):
+    def __init__(
+        self,
+        timestamp: int,
+        effective: int,
+        average_effective: int,
+        reported: int,
+        valid: int,
+        stale: int,
+        invalid: int,
+    ):
         self.time = datetime.fromtimestamp(timestamp)
         self.timestamp = timestamp
         self.effective_hashrate = effective
@@ -120,13 +147,26 @@ class StatChartItem:
         self.invalid_shares = invalid
 
     def __repr__(self):
-        return "<flexpoolapi.miner.StatChartItem object " \
+        return (
+            "<flexpoolapi.miner.StatChartItem object "
             f"({self.time.strftime('%Y %b %d %H:%M')})>"
+        )
 
 
 class Worker:
-    def __init__(self, name: str, is_online: bool, count: int, reported: int, effective: int,
-            average_effective: int, valid: int, stale: int, invalid: int, last_seen: int):
+    def __init__(
+        self,
+        name: str,
+        is_online: bool,
+        count: int,
+        reported: int,
+        effective: int,
+        average_effective: int,
+        valid: int,
+        stale: int,
+        invalid: int,
+        last_seen: int,
+    ):
         self.name = name
         self.is_online = is_online
         self.count = count
@@ -144,8 +184,18 @@ class Worker:
 
 
 class Payment:
-    def __init__(self, tx_hash: str, timestamp: int, value: int, fee: int, fee_percent: float, fee_price: int,
-            duration: int, confirmed: bool, confirmed_timestamp: int):
+    def __init__(
+        self,
+        tx_hash: str,
+        timestamp: int,
+        value: int,
+        fee: int,
+        fee_percent: float,
+        fee_price: int,
+        duration: int,
+        confirmed: bool,
+        confirmed_timestamp: int,
+    ):
         self.hash = tx_hash
         self.time = datetime.fromtimestamp(timestamp)
         self.timestamp = timestamp
@@ -159,12 +209,23 @@ class Payment:
         self.confirmed_timestamp = confirmed_timestamp
 
     def __repr__(self):
-        return "<flexpoolapi.miner.Payment object " \
+        return (
+            "<flexpoolapi.miner.Payment object "
             f"{self.value} ({self.confirmed_time.strftime('%Y %b %d %H:%M')})>"
+        )
 
 
 class PaymentsStats:
-    def __init__(self, value: int, fee: int, fee_percent: float, duration: int, paid: int, fees: int, count: int):
+    def __init__(
+        self,
+        value: int,
+        fee: int,
+        fee_percent: float,
+        duration: int,
+        paid: int,
+        fees: int,
+        count: int,
+    ):
         self.average_value = value
         self.average_fee = fee
         self.average_fee_percent = fee_percent
@@ -174,12 +235,16 @@ class PaymentsStats:
         self.transaction_count = count
 
     def __repr__(self):
-        return "<flexpoolapi.miner.PaymentsStats object " \
+        return (
+            "<flexpoolapi.miner.PaymentsStats object "
             f"{self.average_value} ({self.transaction_count})>"
+        )
 
 
 class PaymentsStatsResponse:
-    def __init__(self, countervalue: float, last_payment: Payment, stats: PaymentsStats):
+    def __init__(
+        self, countervalue: float, last_payment: Payment, stats: PaymentsStats
+    ):
         self.countervalue = countervalue
         self.last_payment = last_payment
         self.stats = stats
@@ -198,8 +263,16 @@ class BlockShare:
 
 
 class BlockRewards:
-    def __init__(self, share: float, reward: float, confirmed: bool, block_hash: str, timestamp: int,
-            block_number: int, block_type: str):
+    def __init__(
+        self,
+        share: float,
+        reward: float,
+        confirmed: bool,
+        block_hash: str,
+        timestamp: int,
+        block_number: int,
+        block_type: str,
+    ):
         self.share = share
         self.reward = reward
         self.confirmed = confirmed
@@ -210,8 +283,10 @@ class BlockRewards:
         self.block_type = block_type
 
     def __repr__(self):
-        return "<flexpoolapi.miner.BlockRewards object " \
+        return (
+            "<flexpoolapi.miner.BlockRewards object "
             f"{self.block_type.capitalize()} #{self.block_number} ({self.hash[:5 + 2] + '…' + self.hash[-5:]})>"
+        )
 
 
 class MinerAPI:
@@ -224,18 +299,36 @@ class MinerAPI:
         locate_address(address)
 
     def payout_settings(self, ip_address: str, max_fee_price: int, payout_limit: int):
-        api_request = requests.put(f"{self.endpoint}/payoutSettings", params=self.params + \
-            [("ipAddress", ip_address), ("maxFeePrice", max_fee_price), ("payoutLimit", payout_limit)])
+        api_request = requests.put(
+            f"{self.endpoint}/payoutSettings",
+            params=self.params
+            + [
+                ("ipAddress", ip_address),
+                ("maxFeePrice", max_fee_price),
+                ("payoutLimit", payout_limit),
+            ],
+        )
         shared.check_response(api_request)
         return True
 
-    def notification_settings(self, ip_address: str, email_enabled: bool, email: str=None,
-            payment_notifications: bool=None, workers_offline_notifications: bool=None):
+    def notification_settings(
+        self,
+        ip_address: str,
+        email_enabled: bool,
+        email: str = None,
+        payment_notifications: bool = None,
+        workers_offline_notifications: bool = None,
+    ):
         params = [("ipAddress", ip_address), ("emailEnabled", email_enabled)]
         if email_enabled:
-            params += [("email", email), ("paymentNotifications", payment_notifications),
-                ("workersOfflineNotifications", workers_offline_notifications)]
-        api_request = requests.put(f"{self.endpoint}/notificationSettings", params=self.params + params)
+            params += [
+                ("email", email),
+                ("paymentNotifications", payment_notifications),
+                ("workersOfflineNotifications", workers_offline_notifications),
+            ]
+        api_request = requests.put(
+            f"{self.endpoint}/notificationSettings", params=self.params + params
+        )
         shared.check_response(api_request)
         return True
 
@@ -246,17 +339,31 @@ class MinerAPI:
         notification_preferences = api_request["notificationPreferences"]
         notifications = api_request["notifications"]
         return Details(
-            api_request["clientIPAddress"], api_request["currentNetworkFeePrice"], api_request["firstJoined"],
-            api_request["ipAddress"], api_request["maxFeePrice"], api_request["payoutLimit"],
+            api_request["clientIPAddress"],
+            api_request["currentNetworkFeePrice"],
+            api_request["firstJoined"],
+            api_request["ipAddress"],
+            api_request["maxFeePrice"],
+            api_request["payoutLimit"],
             NotificationPreferences(
-                notification_preferences["workersOfflineNotifications"], notification_preferences["payoutNotifications"]),
-            Notifications(notifications["email"]))
+                notification_preferences["workersOfflineNotifications"],
+                notification_preferences["payoutNotifications"],
+            ),
+            Notifications(notifications["email"]),
+        )
 
-    def balance(self, countervalue: str="USD"):
-        api_request = requests.get(f"{self.endpoint}/balance", params=self.params + [("countervalue", countervalue)])
+    def balance(self, countervalue: str = "USD"):
+        api_request = requests.get(
+            f"{self.endpoint}/balance",
+            params=self.params + [("countervalue", countervalue)],
+        )
         shared.check_response(api_request)
         api_request = api_request.json()["result"]
-        return Balance(api_request["balance"], api_request["balanceCountervalue"], api_request["price"])
+        return Balance(
+            api_request["balance"],
+            api_request["balanceCountervalue"],
+            api_request["price"],
+        )
 
     def worker_count(self):
         api_request = requests.get(f"{self.endpoint}/workerCount", params=self.params)
@@ -269,25 +376,40 @@ class MinerAPI:
         shared.check_response(api_request)
         return api_request.json()["result"]
 
-    def stats(self, worker_name: str=""):
-        api_request = requests.get(f"{self.endpoint}/stats", params=self.params + [("worker", worker_name)])
+    def stats(self, worker_name: str = ""):
+        api_request = requests.get(
+            f"{self.endpoint}/stats", params=self.params + [("worker", worker_name)]
+        )
         shared.check_response(api_request)
         api_request = api_request.json()["result"]
         class_ = Stats(
-            api_request["currentEffectiveHashrate"], api_request["averageEffectiveHashrate"],
-            api_request["reportedHashrate"], api_request["validShares"],
-            api_request["staleShares"], api_request["invalidShares"])
+            api_request["currentEffectiveHashrate"],
+            api_request["averageEffectiveHashrate"],
+            api_request["reportedHashrate"],
+            api_request["validShares"],
+            api_request["staleShares"],
+            api_request["invalidShares"],
+        )
         return class_
 
-    def chart(self, worker_name: str=""):
-        api_request = requests.get(f"{self.endpoint}/chart", params=self.params + [("worker", worker_name)])
+    def chart(self, worker_name: str = ""):
+        api_request = requests.get(
+            f"{self.endpoint}/chart", params=self.params + [("worker", worker_name)]
+        )
         shared.check_response(api_request)
         items = []
         for item in api_request.json()["result"]:
-            items.append(StatChartItem(
-                item["timestamp"], item["effectiveHashrate"],
-                item["averageEffectiveHashrate"], item["reportedHashrate"],
-                item["validShares"], item["staleShares"], item["invalidShares"]))
+            items.append(
+                StatChartItem(
+                    item["timestamp"],
+                    item["effectiveHashrate"],
+                    item["averageEffectiveHashrate"],
+                    item["reportedHashrate"],
+                    item["validShares"],
+                    item["staleShares"],
+                    item["invalidShares"],
+                )
+            )
         return items
 
     def workers(self):
@@ -295,41 +417,84 @@ class MinerAPI:
         shared.check_response(api_request)
         classed_workers = []
         for worker_ in api_request.json()["result"]:
-            classed_workers.append(Worker(
-                worker_["name"], worker_["isOnline"], worker_["count"],
-                worker_["reportedHashrate"], worker_["currentEffectiveHashrate"],
-                worker_["averageEffectiveHashrate"], worker_["validShares"],
-                worker_["staleShares"], worker_["invalidShares"], worker_["lastSeen"]))
+            classed_workers.append(
+                Worker(
+                    worker_["name"],
+                    worker_["isOnline"],
+                    worker_["count"],
+                    worker_["reportedHashrate"],
+                    worker_["currentEffectiveHashrate"],
+                    worker_["averageEffectiveHashrate"],
+                    worker_["validShares"],
+                    worker_["staleShares"],
+                    worker_["invalidShares"],
+                    worker_["lastSeen"],
+                )
+            )
         return classed_workers
 
-    def blocks(self, page: int=0):
-        api_request = requests.get(f"{self.endpoint}/blocks", params=self.params + [("page", page)])
+    def blocks(self, page: int = 0):
+        api_request = requests.get(
+            f"{self.endpoint}/blocks", params=self.params + [("page", page)]
+        )
         shared.check_response(api_request)
         api_request = api_request.json()["result"]
         classed_blocks = []
         for raw_block in api_request["data"]:
-            classed_blocks.append(shared.Block(
-                raw_block["hash"], raw_block["number"], raw_block["type"], raw_block["miner"],
-                raw_block["difficulty"], raw_block["timestamp"], raw_block["confirmed"],raw_block["roundTime"],
-                raw_block["luck"], raw_block["region"], raw_block["staticBlockReward"],
-                raw_block["txFeeReward"], raw_block["mevReward"], raw_block["reward"]))
-        return shared.PageResponse(classed_blocks, api_request["totalItems"], api_request["totalPages"])
+            classed_blocks.append(
+                shared.Block(
+                    raw_block["hash"],
+                    raw_block["number"],
+                    raw_block["type"],
+                    raw_block["miner"],
+                    raw_block["difficulty"],
+                    raw_block["timestamp"],
+                    raw_block["confirmed"],
+                    raw_block["roundTime"],
+                    raw_block["luck"],
+                    raw_block["region"],
+                    raw_block["staticBlockReward"],
+                    raw_block["txFeeReward"],
+                    raw_block["mevReward"],
+                    raw_block["reward"],
+                )
+            )
+        return shared.PageResponse(
+            classed_blocks, api_request["totalItems"], api_request["totalPages"]
+        )
 
-    def payments(self, countervalue: str="USD", page: int=0):
-        api_request = requests.get(f"{self.endpoint}/payments",
-            params=self.params + [("countervalue", countervalue), ("page", page)])
+    def payments(self, countervalue: str = "USD", page: int = 0):
+        api_request = requests.get(
+            f"{self.endpoint}/payments",
+            params=self.params + [("countervalue", countervalue), ("page", page)],
+        )
         shared.check_response(api_request)
         api_request = api_request.json()["result"]
         classed_payments = []
         if api_request["data"]:
             for raw_tx in api_request["data"]:
-                classed_payments.append(Payment(
-                    raw_tx["hash"], raw_tx["timestamp"], raw_tx["value"], raw_tx["fee"], raw_tx["feePercent"],
-                    raw_tx["feePrice"], raw_tx["duration"], raw_tx["confirmed"], raw_tx["confirmedTimestamp"]))
-        return shared.PageResponse(classed_payments, api_request["totalItems"], api_request["totalPages"])
+                classed_payments.append(
+                    Payment(
+                        raw_tx["hash"],
+                        raw_tx["timestamp"],
+                        raw_tx["value"],
+                        raw_tx["fee"],
+                        raw_tx["feePercent"],
+                        raw_tx["feePrice"],
+                        raw_tx["duration"],
+                        raw_tx["confirmed"],
+                        raw_tx["confirmedTimestamp"],
+                    )
+                )
+        return shared.PageResponse(
+            classed_payments, api_request["totalItems"], api_request["totalPages"]
+        )
 
-    def payments_stats(self, countervalue: str="USD"):
-        api_request = requests.get(f"{self.endpoint}/paymentsStats", params=self.params + [("countervalue", countervalue)])
+    def payments_stats(self, countervalue: str = "USD"):
+        api_request = requests.get(
+            f"{self.endpoint}/paymentsStats",
+            params=self.params + [("countervalue", countervalue)],
+        )
         shared.check_response(api_request)
         api_request = api_request.json()["result"]
         raw_tx = api_request["lastPayment"]
@@ -337,14 +502,32 @@ class MinerAPI:
         return PaymentsStatsResponse(
             api_request["countervalue"],
             Payment(
-                raw_tx["hash"], raw_tx["timestamp"], raw_tx["value"], raw_tx["fee"], raw_tx["feePercent"],
-                raw_tx["feePrice"], raw_tx["duration"], raw_tx["confirmed"], raw_tx["confirmedTimestamp"]),
+                raw_tx["hash"],
+                raw_tx["timestamp"],
+                raw_tx["value"],
+                raw_tx["fee"],
+                raw_tx["feePercent"],
+                raw_tx["feePrice"],
+                raw_tx["duration"],
+                raw_tx["confirmed"],
+                raw_tx["confirmedTimestamp"],
+            ),
             PaymentsStats(
-                stats["averageValue"], stats["averageFee"], stats["averageFeePercent"], stats["averageDuration"],
-                stats["totalPaid"], stats["totalFees"], stats["transactionCount"]))
+                stats["averageValue"],
+                stats["averageFee"],
+                stats["averageFeePercent"],
+                stats["averageDuration"],
+                stats["totalPaid"],
+                stats["totalFees"],
+                stats["transactionCount"],
+            ),
+        )
 
     def round_share_at(self, block_hash: str):
-        api_request = requests.get(f"{self.endpoint}/roundShareAt", params=self.params + [("blockHash", block_hash)])
+        api_request = requests.get(
+            f"{self.endpoint}/roundShareAt",
+            params=self.params + [("blockHash", block_hash)],
+        )
         shared.check_response(api_request)
         api_request = api_request.json()["result"]
         return BlockShare(api_request["rewardShare"], api_request["roundShare"])
@@ -355,7 +538,15 @@ class MinerAPI:
         api_request = api_request.json()["result"]
         classed_rewards = []
         for raw_data in api_request:
-            classed_rewards.append(BlockRewards(
-                raw_data["share"], raw_data["reward"], raw_data["confirmed"], raw_data["hash"],
-                raw_data["timestamp"], raw_data["blockNumber"], raw_data["blockType"]))
+            classed_rewards.append(
+                BlockRewards(
+                    raw_data["share"],
+                    raw_data["reward"],
+                    raw_data["confirmed"],
+                    raw_data["hash"],
+                    raw_data["timestamp"],
+                    raw_data["blockNumber"],
+                    raw_data["blockType"],
+                )
+            )
         return classed_rewards

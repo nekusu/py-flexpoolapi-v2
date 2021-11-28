@@ -25,9 +25,23 @@ from . import exceptions
 
 
 class Block:
-    def __init__(self, block_hash: str, number: int, block_type: str, miner: str, difficulty: int, timestamp: int,
-            confirmed: bool, round_time: int, luck: float, region: str, static_block_reward:int, tx_fee_reward: int,
-            mev_reward: int, reward: int):
+    def __init__(
+        self,
+        block_hash: str,
+        number: int,
+        block_type: str,
+        miner: str,
+        difficulty: int,
+        timestamp: int,
+        confirmed: bool,
+        round_time: int,
+        luck: float,
+        region: str,
+        static_block_reward: int,
+        tx_fee_reward: int,
+        mev_reward: int,
+        reward: int,
+    ):
         self.number = number
         self.hash = block_hash
         self.type = block_type
@@ -45,8 +59,10 @@ class Block:
         self.reward = reward
 
     def __repr__(self):
-        return "<flexpoolapi.shared.Block object " \
+        return (
+            "<flexpoolapi.shared.Block object "
             f"{self.type.capitalize()} #{self.number} ({self.hash[:5 + 2] + '…' + self.hash[-5:]})>"
+        )
 
 
 class PageResponse:
@@ -70,13 +86,24 @@ class PageResponse:
 
 def check_response(request):
     if request.status_code not in [200, 201, 400]:
-        raise(exceptions.UnexpectedStatusCode(
-            f"API Returned unexpected status code: {request.status_code} "
-            f"{request.reason} (Request URL: {request.url})"))
+        raise (
+            exceptions.UnexpectedStatusCode(
+                f"API Returned unexpected status code: {request.status_code} "
+                f"{request.reason} (Request URL: {request.url})"
+            )
+        )
 
     if request.text:
-        error = "error" in request.json() and request.json()["error"] or \
-            "message" in request.json() and request.json()["message"]
+        error = (
+            "error" in request.json()
+            and request.json()["error"]
+            or "message" in request.json()
+            and request.json()["message"]
+        )
 
         if error:
-            raise(exceptions.APIError(f"API Returned error: {error} (Request URL: {request.url})"))
+            raise (
+                exceptions.APIError(
+                    f"API Returned error: {error} (Request URL: {request.url})"
+                )
+            )

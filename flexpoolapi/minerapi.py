@@ -69,6 +69,7 @@ class Details:
         ip_address: str,
         max_fee_price: int,
         payout_limit: int,
+        network: str,
         notification_preferences: NotificationPreferences,
         notifications: Notifications,
     ):
@@ -79,6 +80,7 @@ class Details:
         self.ip_address = ip_address
         self.max_fee_price = max_fee_price
         self.payout_limit = payout_limit
+        self.network = network
         self.notification_preferences = notification_preferences
         self.notifications = notifications
 
@@ -195,6 +197,7 @@ class Payment:
         duration: int,
         confirmed: bool,
         confirmed_timestamp: int,
+        network: str,
     ):
         self.hash = tx_hash
         self.time = datetime.fromtimestamp(timestamp)
@@ -207,6 +210,7 @@ class Payment:
         self.confirmed = confirmed
         self.confirmed_time = datetime.fromtimestamp(confirmed_timestamp)
         self.confirmed_timestamp = confirmed_timestamp
+        self.network = network
 
     def __repr__(self):
         return (
@@ -298,7 +302,9 @@ class MinerAPI:
         self.endpoint = __MINER_API_ENDPOINT__
         locate_address(address)
 
-    def payout_settings(self, ip_address: str, max_fee_price: int, payout_limit: int):
+    def payout_settings(
+        self, ip_address: str, max_fee_price: int, payout_limit: int, network: str
+    ):
         api_request = requests.put(
             f"{self.endpoint}/payoutSettings",
             params=self.params
@@ -306,6 +312,7 @@ class MinerAPI:
                 ("ipAddress", ip_address),
                 ("maxFeePrice", max_fee_price),
                 ("payoutLimit", payout_limit),
+                ("network", network),
             ],
         )
         shared.check_response(api_request)
@@ -345,6 +352,7 @@ class MinerAPI:
             api_request["ipAddress"],
             api_request["maxFeePrice"],
             api_request["payoutLimit"],
+            api_request["network"],
             NotificationPreferences(
                 notification_preferences["workersOfflineNotifications"],
                 notification_preferences["payoutNotifications"],
@@ -484,6 +492,7 @@ class MinerAPI:
                         raw_tx["duration"],
                         raw_tx["confirmed"],
                         raw_tx["confirmedTimestamp"],
+                        raw_tx["network"],
                     )
                 )
         return shared.PageResponse(
@@ -511,6 +520,7 @@ class MinerAPI:
                 raw_tx["duration"],
                 raw_tx["confirmed"],
                 raw_tx["confirmedTimestamp"],
+                raw_tx["network"],
             ),
             PaymentsStats(
                 stats["averageValue"],

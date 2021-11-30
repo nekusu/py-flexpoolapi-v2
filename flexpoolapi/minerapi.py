@@ -343,8 +343,10 @@ class MinerAPI:
             NotificationPreferences(
                 preferences["workersOfflineNotifications"],
                 preferences["payoutNotifications"],
-            ),
-            Notifications(notifications["email"]),
+            )
+            if preferences
+            else None,
+            Notifications(notifications["email"]) if notifications else None,
         )
 
     def balance(self, countervalue: str = "") -> Balance:
@@ -488,7 +490,9 @@ class MinerAPI:
                 payment["confirmed"],
                 payment["confirmedTimestamp"],
                 payment["network"],
-            ),
+            )
+            if payment
+            else None,
             PaymentsStats(
                 stats["averageValue"],
                 stats["averageFee"],
@@ -497,7 +501,9 @@ class MinerAPI:
                 stats["totalPaid"],
                 stats["totalFees"],
                 stats["transactionCount"],
-            ),
+            )
+            if stats
+            else None,
         )
 
     def round_share_at(self, block_hash: str) -> BlockShare:

@@ -18,8 +18,6 @@
 #  SOFTWARE.
 #
 
-import requests
-
 from typing import Dict, List
 from datetime import datetime
 from . import shared
@@ -32,76 +30,13 @@ def update_endpoint(endpoint):
     __POOL_API_ENDPOINT__ = endpoint + "/pool"
 
 
-def coins():
-    api_request = requests.get(f"{__POOL_API_ENDPOINT__}/coins")
-    shared.check_response(api_request)
-    api_request = api_request.json()["result"]
-    coins_classed = []
-    for coin in api_request["coins"]:
-        coins_classed.append(
-            Coin(
-                coin["ticker"],
-                coin["name"],
-                coin["decimalPlaces"],
-                coin["shareDifficulty"],
-                coin["transactionSize"],
-                coin["lowestMinPayoutThreshold"],
-                coin["difficultyFactor"],
-                coin["hashrateUnit"],
-            )
-        )
-    return CoinsList(coins_classed, api_request["countervalues"])
-
-
-def coins_full():
-    api_request = requests.get(f"{__POOL_API_ENDPOINT__}/coinsFull")
-    shared.check_response(api_request)
-    coins_classed = []
-    for coin in api_request.json()["result"]:
-        chain_data = coin["chainData"]
-        market_data = coin["marketData"]
-        coins_classed.append(
-            CoinFull(
-                coin["ticker"],
-                coin["name"],
-                coin["algorithm"],
-                coin["hashrateUnit"],
-                coin["hashrate"],
-                coin["minerCount"],
-                coin["defaultHashrateSiPrefix"],
-                coin["applicableHashrateSiPrefixes"],
-                coin["decimalPlaces"],
-                coin["difficultyFactor"],
-                coin["websiteLink"],
-                coin["whitepaperLink"],
-                ChainData(
-                    chain_data["reward"],
-                    chain_data["difficulty"],
-                    chain_data["hashrate"],
-                    chain_data["blockTime"],
-                    chain_data["dailyRewardPerGigaHashSec"],
-                ),
-                MarketData(
-                    market_data["priceChange"],
-                    market_data["prices"],
-                    market_data["marketCaps"],
-                ),
-            )
-        )
-    return coins_classed
-
-
 class Hashrate:
-    def __init__(self, total: int, regions: Dict):
+    def __init__(self, regions: Dict, total: int):
         self.regions = regions
         self.total = total
 
     def __repr__(self):
-        servers = []
-        for server_name, server_hashrate in self.regions.items():
-            servers.append(f"{server_name} ({server_hashrate})")
-
-        return "<flexpoolapi.pool.Hashrate object " + ", ".join(servers) + ">"
+        return "<flexpoolapi.pool.Hashrate object>"
 
 
 class HashrateChartItem:
@@ -112,11 +47,7 @@ class HashrateChartItem:
         self.total = total
 
     def __repr__(self):
-        servers = []
-        for server_name, server_hashrate in self.regions.items():
-            servers.append(f"{server_name} ({server_hashrate})")
-
-        return "<flexpoolapi.pool.HashrateChartItem object " + ", ".join(servers) + ">"
+        return "<flexpoolapi.pool.HashrateChartItem object>"
 
 
 class Coin:
@@ -127,7 +58,7 @@ class Coin:
         decimal_places: int,
         share_difficulty: int,
         transaction_size: int,
-        min_payout_threshold: int,
+        lowest_min_payout_threshold: int,
         difficulty_factor: int,
         hashrate_unit: str,
     ):
@@ -136,12 +67,12 @@ class Coin:
         self.decimal_places = decimal_places
         self.share_difficulty = share_difficulty
         self.transaction_size = transaction_size
-        self.lowest_min_payout_threshold = min_payout_threshold
+        self.lowest_min_payout_threshold = lowest_min_payout_threshold
         self.difficulty_factor = difficulty_factor
         self.hashrate_unit = hashrate_unit
 
     def __repr__(self):
-        return f"<flexpoolapi.pool.Coin object {self.name} ({self.ticker})>"
+        return f"<flexpoolapi.pool.Coin object ({self.ticker})>"
 
 
 class CoinsList:
@@ -169,13 +100,13 @@ class ChainData:
         difficulty: int,
         hashrate: float,
         block_time: float,
-        daily_reward: int,
+        daily_reward_per_giga_hash_sec: int,
     ):
         self.reward = reward
         self.difficulty = difficulty
         self.hashrate = hashrate
         self.block_time = block_time
-        self.daily_reward_per_giga_hash_sec = daily_reward
+        self.daily_reward_per_giga_hash_sec = daily_reward_per_giga_hash_sec
 
     def __repr__(self):
         return f"<flexpoolapi.pool.ChainData object>"
@@ -200,8 +131,8 @@ class CoinFull:
         hashrate_unit: str,
         hashrate: float,
         miner_count: int,
-        default_prefix: str,
-        applicable_prefixes: List,
+        default_hashrate_si_prefix: str,
+        applicable_hashrate_si_prefixes: List,
         decimal_places: int,
         difficulty_factor: int,
         website_link: str,
@@ -215,8 +146,8 @@ class CoinFull:
         self.hashrate_unit = hashrate_unit
         self.hashrate = hashrate
         self.miner_count = miner_count
-        self.default_hashrate_si_prefix = default_prefix
-        self.applicable_hashrate_si_prefixes = applicable_prefixes
+        self.default_hashrate_si_prefix = default_hashrate_si_prefix
+        self.applicable_hashrate_si_prefixes = applicable_hashrate_si_prefixes
         self.decimal_places = decimal_places
         self.difficulty_factor = difficulty_factor
         self.website_link = website_link
@@ -225,10 +156,10 @@ class CoinFull:
         self.market_data = market_data
 
     def __repr__(self):
-        return f"<flexpoolapi.pool.CoinFull object {self.name} ({self.ticker})>"
+        return f"<flexpoolapi.pool.CoinFull object ({self.ticker})>"
 
 
-class TopMiner:
+class Miner:
     def __init__(
         self,
         address: str,
@@ -245,7 +176,7 @@ class TopMiner:
         self.balance = balance
 
     def __repr__(self):
-        return f"<flexpoolapi.pool.TopMiner object {self.address}: {self.hashrate}>"
+        return f"<flexpoolapi.pool.Miner object ({self.address[:5 + 2] + '…' + self.address[-5:]})>"
 
 
 class BlockChartItem:
@@ -274,7 +205,7 @@ class HashrateDistribution:
         self.hashrate = hashrate
 
     def __repr__(self):
-        return f"<flexpoolapi.pool.HashrateDistribution object {self.hashrate_lower_than}: {self.hashrate}>"
+        return f"<flexpoolapi.pool.HashrateDistribution object>"
 
 
 class BlockStats:
@@ -284,7 +215,7 @@ class BlockStats:
         self.orphans = orphans
 
     def __repr__(self):
-        return f"<flexpoolapi.pool.BlockStats object {self.blocks} - {self.uncles} - {self.orphans}>"
+        return f"<flexpoolapi.pool.BlockStats object>"
 
 
 class BlockStatsResponse:
@@ -304,120 +235,139 @@ class BlockStatsResponse:
         return f"<flexpoolapi.pool.BlockStatsResponse object>"
 
 
+def coins() -> CoinsList:
+    raw_data = shared.get(f"{__POOL_API_ENDPOINT__}/coins")
+    classed_coins = []
+    for coin in raw_data["coins"]:
+        classed_coins.append(
+            Coin(
+                coin["ticker"],
+                coin["name"],
+                coin["decimalPlaces"],
+                coin["shareDifficulty"],
+                coin["transactionSize"],
+                coin["lowestMinPayoutThreshold"],
+                coin["difficultyFactor"],
+                coin["hashrateUnit"],
+            )
+        )
+    return CoinsList(classed_coins, raw_data["countervalues"])
+
+
+def coins_full() -> List[CoinFull]:
+    raw_coins = shared.get(f"{__POOL_API_ENDPOINT__}/coinsFull")
+    classed_coins = []
+    for coin in raw_coins:
+        chain_data = coin["chainData"]
+        market_data = coin["marketData"]
+        classed_coins.append(
+            CoinFull(
+                coin["ticker"],
+                coin["name"],
+                coin["algorithm"],
+                coin["hashrateUnit"],
+                coin["hashrate"],
+                coin["minerCount"],
+                coin["defaultHashrateSiPrefix"],
+                coin["applicableHashrateSiPrefixes"],
+                coin["decimalPlaces"],
+                coin["difficultyFactor"],
+                coin["websiteLink"],
+                coin["whitepaperLink"],
+                ChainData(
+                    chain_data["reward"],
+                    chain_data["difficulty"],
+                    chain_data["hashrate"],
+                    chain_data["blockTime"],
+                    chain_data["dailyRewardPerGigaHashSec"],
+                ),
+                MarketData(
+                    market_data["priceChange"],
+                    market_data["prices"],
+                    market_data["marketCaps"],
+                ),
+            )
+        )
+    return classed_coins
+
+
 class PoolAPI:
     def __init__(self, coin: str):
         self.coin = coin
         self.params = [("coin", self.coin)]
         self.endpoint = __POOL_API_ENDPOINT__
 
-    def hashrate(self):
-        api_request = requests.get(f"{self.endpoint}/hashrate", params=self.params)
-        shared.check_response(api_request)
-        api_request = api_request.json()["result"]
-        return Hashrate(api_request["total"], api_request["regions"])
+    def hashrate(self) -> Hashrate:
+        raw_data = shared.get(f"{self.endpoint}/hashrate", self.params)
+        return Hashrate(raw_data["total"], raw_data["regions"])
 
-    def average_hashrate(self):
-        api_request = requests.get(
-            f"{self.endpoint}/averageHashrate", params=self.params
-        )
-        shared.check_response(api_request)
-        return api_request.json()["result"]
+    def average_hashrate(self) -> float:
+        return shared.get(f"{self.endpoint}/averageHashrate", self.params)
 
-    def hashrate_chart(self):
-        api_request = requests.get(f"{self.endpoint}/hashrateChart", params=self.params)
-        shared.check_response(api_request)
-        classed_hashrate_chart = []
-        for item in api_request.json()["result"]:
-            classed_hashrate_chart.append(
+    def hashrate_chart(self) -> List[HashrateChartItem]:
+        raw_chart = shared.get(f"{self.endpoint}/hashrateChart", self.params)
+        classed_chart = []
+        for item in raw_chart:
+            classed_chart.append(
                 HashrateChartItem(item["timestamp"], item["regions"], item["total"])
             )
-        return classed_hashrate_chart
+        return classed_chart
 
-    def miner_count(self):
-        api_request = requests.get(f"{self.endpoint}/minerCount", params=self.params)
-        shared.check_response(api_request)
-        return api_request.json()["result"]
+    def miner_count(self) -> int:
+        return shared.get(f"{self.endpoint}/minerCount", self.params)
 
-    def worker_count(self):
-        api_request = requests.get(f"{self.endpoint}/workerCount", params=self.params)
-        shared.check_response(api_request)
-        return api_request.json()["result"]
+    def worker_count(self) -> int:
+        return shared.get(f"{self.endpoint}/workerCount", self.params)
 
-    def daily_reward_per_giga_hash_sec(self):
-        api_request = requests.get(
-            f"{self.endpoint}/dailyRewardPerGigahashSec", params=self.params
-        )
-        shared.check_response(api_request)
-        return api_request.json()["result"]
+    def daily_reward_per_giga_hash_sec(self) -> int:
+        return shared.get(f"{self.endpoint}/dailyRewardPerGigahashSec", self.params)
 
-    def average_block_reward(self):
-        api_request = requests.get(
-            f"{self.endpoint}/averageBlockReward", params=self.params
-        )
-        shared.check_response(api_request)
-        return api_request.json()["result"]
+    def average_block_reward(self) -> int:
+        return shared.get(f"{self.endpoint}/averageBlockReward", self.params)
 
-    def average_luck(self):
-        api_request = requests.get(f"{self.endpoint}/averageLuck", params=self.params)
-        shared.check_response(api_request)
-        return api_request.json()["result"]
+    def average_luck(self) -> float:
+        return shared.get(f"{self.endpoint}/averageLuck", self.params)
 
-    def current_luck(self):
-        api_request = requests.get(f"{self.endpoint}/currentLuck", params=self.params)
-        shared.check_response(api_request)
-        return api_request.json()["result"]
+    def current_luck(self) -> float:
+        return shared.get(f"{self.endpoint}/currentLuck", self.params)
 
-    def network_hashrate(self):
-        api_request = requests.get(
-            f"{self.endpoint}/networkHashrate", params=self.params
-        )
-        shared.check_response(api_request)
-        return api_request.json()["result"]
+    def network_hashrate(self) -> float:
+        return shared.get(f"{self.endpoint}/networkHashrate", self.params)
 
-    def network_difficulty(self):
-        api_request = requests.get(
-            f"{self.endpoint}/networkDifficulty", params=self.params
-        )
-        shared.check_response(api_request)
-        return api_request.json()["result"]
+    def network_difficulty(self) -> int:
+        return shared.get(f"{self.endpoint}/networkDifficulty", self.params)
 
-    def blocks(self, page: int = 0):
-        api_request = requests.get(
-            f"{self.endpoint}/blocks", params=self.params + [("page", page)]
-        )
-        shared.check_response(api_request)
-        api_request = api_request.json()["result"]
+    def blocks(self, page: int = 0) -> shared.PageResponse:
+        raw_page = shared.get(f"{self.endpoint}/blocks", self.params + [("page", page)])
         classed_blocks = []
-        for raw_block in api_request["data"]:
+        for block in raw_page["data"]:
             classed_blocks.append(
                 shared.Block(
-                    raw_block["hash"],
-                    raw_block["number"],
-                    raw_block["type"],
-                    raw_block["miner"],
-                    raw_block["difficulty"],
-                    raw_block["timestamp"],
-                    raw_block["confirmed"],
-                    raw_block["roundTime"],
-                    raw_block["luck"],
-                    raw_block["region"],
-                    raw_block["staticBlockReward"],
-                    raw_block["txFeeReward"],
-                    raw_block["mevReward"],
-                    raw_block["reward"],
+                    block["hash"],
+                    block["number"],
+                    block["type"],
+                    block["miner"],
+                    block["difficulty"],
+                    block["timestamp"],
+                    block["confirmed"],
+                    block["roundTime"],
+                    block["luck"],
+                    block["region"],
+                    block["staticBlockReward"],
+                    block["txFeeReward"],
+                    block["mevReward"],
+                    block["reward"],
                 )
             )
         return shared.PageResponse(
-            classed_blocks, api_request["totalItems"], api_request["totalPages"]
+            classed_blocks, raw_page["totalItems"], raw_page["totalPages"]
         )
 
-    def block_by_hash(self, block_hash: str):
-        api_request = requests.get(
+    def block_by_hash(self, block_hash: str) -> shared.Block:
+        raw_block = shared.get(
             f"{self.endpoint}/blockByHash",
-            params=self.params + [("blockHash", block_hash)],
+            self.params + [("blockHash", block_hash)],
         )
-        shared.check_response(api_request)
-        raw_block = api_request.json()["result"]
         return shared.Block(
             raw_block["hash"],
             raw_block["number"],
@@ -435,13 +385,12 @@ class PoolAPI:
             raw_block["reward"],
         )
 
-    def top_miners(self):
-        api_request = requests.get(f"{self.endpoint}/topMiners", params=self.params)
-        shared.check_response(api_request)
+    def top_miners(self) -> List[Miner]:
+        raw_miners = shared.get(f"{self.endpoint}/topMiners", self.params)
         classed_miners = []
-        for miner in api_request.json()["result"]:
+        for miner in raw_miners:
             classed_miners.append(
-                TopMiner(
+                Miner(
                     miner["address"],
                     miner["hashrate"],
                     miner["workerCount"],
@@ -451,12 +400,11 @@ class PoolAPI:
             )
         return classed_miners
 
-    def blocks_chart(self):
-        api_request = requests.get(f"{self.endpoint}/blocksChart", params=self.params)
-        shared.check_response(api_request)
-        classed_blocks_chart = []
-        for item in api_request.json()["result"]:
-            classed_blocks_chart.append(
+    def blocks_chart(self) -> List[BlockChartItem]:
+        raw_chart = shared.get(f"{self.endpoint}/blocksChart", self.params)
+        classed_chart = []
+        for item in raw_chart:
+            classed_chart.append(
                 BlockChartItem(
                     item["timestamp"],
                     item["rewards"],
@@ -465,34 +413,31 @@ class PoolAPI:
                     item["luck"],
                 )
             )
-        return classed_blocks_chart
+        return classed_chart
 
-    def miners_distribution(self):
-        api_request = requests.get(
-            f"{self.endpoint}/minersDistribution", params=self.params
+    def miners_distribution(self) -> List[HashrateDistribution]:
+        raw_distribution = shared.get(
+            f"{self.endpoint}/minersDistribution", self.params
         )
-        shared.check_response(api_request)
         classed_distribution = []
-        for item in api_request.json()["result"]:
+        for item in raw_distribution:
             classed_distribution.append(
                 HashrateDistribution(item["hashrateLowerThan"], item["hashrate"])
             )
         return classed_distribution
 
-    def block_statistics(self):
-        api_request = requests.get(
-            f"{self.endpoint}/blockStatistics", params=self.params
+    def block_statistics(self) -> BlockStatsResponse:
+        raw_stats = shared.get(f"{self.endpoint}/blockStatistics", self.params)
+        classed_stats = {}
+        for item in raw_stats.keys():
+            classed_stats[item] = BlockStats(
+                raw_stats[item]["blocks"],
+                raw_stats[item]["uncles"],
+                raw_stats[item]["orphans"],
+            )
+        return BlockStatsResponse(
+            classed_stats["daily"],
+            classed_stats["weekly"],
+            classed_stats["monthly"],
+            classed_stats["total"],
         )
-        shared.check_response(api_request)
-        api_request = api_request.json()["result"]
-        daily = api_request["daily"]
-        weekly = api_request["weekly"]
-        monthly = api_request["monthly"]
-        total = api_request["total"]
-        daily_stats = BlockStats(daily["blocks"], daily["uncles"], daily["orphans"])
-        weekly_stats = BlockStats(weekly["blocks"], weekly["uncles"], daily["orphans"])
-        monthly_stats = BlockStats(
-            monthly["blocks"], monthly["uncles"], monthly["orphans"]
-        )
-        total_stats = BlockStats(total["blocks"], total["uncles"], total["orphans"])
-        return BlockStatsResponse(daily_stats, weekly_stats, monthly_stats, total_stats)

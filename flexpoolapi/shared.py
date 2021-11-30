@@ -18,7 +18,9 @@
 #  SOFTWARE.
 #
 
-from typing import List
+import requests
+
+from typing import Dict, List
 from datetime import datetime
 
 from . import exceptions
@@ -61,7 +63,7 @@ class Block:
     def __repr__(self):
         return (
             "<flexpoolapi.shared.Block object "
-            f"{self.type.capitalize()} #{self.number} ({self.hash[:5 + 2] + '…' + self.hash[-5:]})>"
+            f"({self.type.capitalize()} {self.hash[:5 + 2] + '…' + self.hash[-5:]})>"
         )
 
 
@@ -107,3 +109,14 @@ def check_response(request):
                     f"API Returned error: {error} (Request URL: {request.url})"
                 )
             )
+
+
+def get(endpoint: str, params: List) -> Dict:
+    api_request = requests.get(endpoint, params=params)
+    check_response(api_request)
+    return api_request.json()["result"]
+
+
+def post(endpoint: str, params: List):
+    api_request = requests.put(endpoint, params=params)
+    check_response(api_request)

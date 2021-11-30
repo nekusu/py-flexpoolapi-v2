@@ -1,6 +1,8 @@
 # py-flexpoolapi-v2
 
-Structured Python wrapper for Flexpool API v2.
+[![PyPI Latest Release](https://img.shields.io/pypi/v/flexpoolapi-v2.svg)](https://pypi.org/project/flexpoolapi-v2)
+
+Structured Python wrapper for [Flexpool.io](https://flexpool.io/) API v2.
 
 # Installation
 
@@ -70,7 +72,14 @@ Quick example:
 'eth'
 ```
 
-For better understanding, I recommend reading the [Flexpool APIv2 documentation](https://www.flexpool.io/docs/api). All variables/functions names were renamed from camelCase (JavaScript) to snake_case (Python).
+For better understanding, I recommend reading the [Flexpool APIv2 documentation](https://www.flexpool.io/docs/api). All variables/functions names were renamed from **camelCase** to **snake_case**.
+
+## Undocumented endpoints added
+### **Miner API**
+
+- `/miner/details` (GET)
+- `/miner/payoutSettings` (POST)
+- `/miner/notificationSettings` (POST)
 
 # License
 MIT - Copyright (c) 2020 Flexpool

@@ -111,7 +111,7 @@ def check_response(request):
             )
 
 
-def get(endpoint: str, params: List) -> Dict:
+def get(endpoint: str, params: List = []) -> Dict:
     api_request = requests.get(endpoint, params=params)
     check_response(api_request)
     return api_request.json()["result"]
